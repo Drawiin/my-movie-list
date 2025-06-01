@@ -1,3 +1,6 @@
+Here is the updated `CHANGELOG.md` with a new entry for version 0.0.2:
+
+```markdown
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -25,10 +28,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing yet.
 
+## [0.0.2] - 2025-05-31
+
+### Added
+- #3 Create movie listing feature.
+    - Network Client
+    - Base ViewModel
+    - Movie List Feature
+
 ## [0.0.1] - 2025-05-30
 
 ### Added
-- Project initial setup.
+- #1 Project initial setup.
   - Created `CHANGELOG.md`.
   - Created `README.md`.
   - Create `LICENSE`
+```
