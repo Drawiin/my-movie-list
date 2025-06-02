@@ -1,8 +1,12 @@
 package com.drawiin.mymovielist.feature.list.data.dto
 
 import com.drawiin.mymovielist.common.movie.domain.model.MoviePreviewModel
+import com.drawiin.mymovielist.core.localization.toLocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Serializable
 data class MovieListResponseDTO(
@@ -33,9 +37,9 @@ data class MoviePreviewDTO(
 
 fun MoviePreviewDTO.toDomainModel(): MoviePreviewModel {
     return MoviePreviewModel(
-        id = id.toString(),
+        id = id,
         title = title,
-        date = releaseDate,
+        date = releaseDate.toLocalDate(),
         bannerUrl = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" } ?: ""
     )
 }

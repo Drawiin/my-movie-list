@@ -50,3 +50,48 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 📝 Changelog
 
 All notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
+
+## Tech Notes
+Deep dive on some of the tech choices and patterns used in this project
+
+### Architecture
+The app uses overall clean architecture with three layers data, domain and presentation, the presentation uses
+MVVM architecture implemented using a base class `MyMoviesViewModel` with some particularities:
+- `State`: The single soruce of truth estate is exposed as a `StateFlow` to allow for easy observation in the UI, the state is always updated and start at a initial state for easier testing.
+- `SideEffects`: The view model exposes a `SingleSharedFlow` for side effects, this allows the view model to emit events that should be handled by the UI, such as navigation or showing a snackbar.
+    > Note: The `SingleSharedFlow` is used to ensure that the side effects are only emitted once and are not replayed on configuration changes and/or on resume events.
+- `Actions`: The actions for simplicity are handled as simple callback functions on the viewmodel.
+-
+#### Interaction with the ViewModel on the UI
+**Observing The State**
+This is done using the `collectAsStateWithLifecycle` extension function, which allows the UI to observe the state and automatically handle lifecycle events.
+```kotlin
+val state by viewModel.state.collectAsStateWithLifecycle()
+```
+
+**Listening to Side Effects**
+This is done using a especial composable function `CollectSideEffects` that allows the UI to listen to side effects and handle them accordingly.
+```kotlin
+ viewModel.sideEffects.SubscribeToSideEffects {
+    when (it) {
+        // Handle side effects here
+    }
+}
+```
+
+**Startup Actions**
+Its common in apps to have some actions that need to be performed on startup, such as fetching data or checking permissions.
+To offer more control over when these actions are performed, and facilitate testing, we have a special `OnStartSideEffect`
+composable that allows the view model to perform actions on startup, it also ensures that the action is called only on the first composition
+avoiding calling this function on configuration changes.
+
+```kotlin
+OnStartSideEffect {
+    viewModel.loadInitalData()
+}
+```
+
+#### Testing ViewModels
+To facilitate testing of the ViewModels, a series of utility functions are provided to help with the setup of the tests.
+
+## Project On Github
