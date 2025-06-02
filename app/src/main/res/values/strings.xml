@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">MyMovieList</string>
+
     <string name="feature_list_popular_movies">Popular Movies</string>
+
+    <string name="feature_details_overview">Overview</string>
 </resources>

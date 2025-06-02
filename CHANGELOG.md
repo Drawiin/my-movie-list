@@ -1,6 +1,3 @@
-Here is the updated `CHANGELOG.md` with a new entry for version 0.0.2:
-
-```markdown
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -28,6 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing yet.
 
+## [0.0.3] - 2025-06-01
+
+### Added
+- #5 Create movie detail screen.
+    - Setup hilt
+    - Setup navigation lib
+    - Create movie detail feature
+
 ## [0.0.2] - 2025-05-31
 
 ### Added
@@ -43,4 +48,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Created `CHANGELOG.md`.
   - Created `README.md`.
   - Create `LICENSE`
-```

@@ -1,10 +1,9 @@
 package com.drawiin.mymovielist.feature.list.presentation
 
 import com.drawiin.mymovielist.core.test.InstantDispatcherRule
-import com.drawiin.mymovielist.feature.list.domain.GetMovieListUseCase
+import com.drawiin.mymovielist.feature.list.domain.usecase.GetMovieListUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
