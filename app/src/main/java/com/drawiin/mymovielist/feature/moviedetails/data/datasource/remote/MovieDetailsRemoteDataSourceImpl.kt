@@ -1,4 +1,4 @@
-package com.drawiin.mymovielist.feature.moviedetails.data.datasource
+package com.drawiin.mymovielist.feature.moviedetails.data.datasource.remote
 
 import com.drawiin.mymovielist.core.network.client.MyMovieListNetworkClient
 import com.drawiin.mymovielist.feature.moviedetails.data.dto.MovieDetailsDTO

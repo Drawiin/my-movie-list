@@ -1,7 +1,8 @@
-package com.drawiin.mymovielist.feature.moviedetails.domain.model
+package com.drawiin.mymovielist.common.movie.domain.model
 
-data class MovieDetailsModel(
+data class MovieModel(
     val id: Int,
+    val isInWatchList: Boolean,
     val title: String,
     val overview: String,
     val releaseDate: String,

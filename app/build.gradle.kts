@@ -28,7 +28,11 @@ android {
 
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
-        buildConfigField("String", "TMDB_API_TOKEN", "\"${properties.getProperty("TMDB_API_TOKEN")}\"")
+        buildConfigField(
+            "String",
+            "TMDB_API_TOKEN",
+            "\"${properties.getProperty("TMDB_API_TOKEN")}\""
+        )
     }
 
     buildTypes {
@@ -78,11 +82,23 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+
+    annotationProcessor(libs.room.compiler)
 
     ksp(libs.hilt.android.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk) {
+        // MockK is used for mocking dependencies in tests
+        // Exclude SLF4J to avoid conflicts with the Android version
+        exclude(group = "org.slf4j")
+    }
+    testImplementation(libs.truth)
+    testImplementation(libs.slf4j.simple)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,4 +107,9 @@ dependencies {
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+configurations.testImplementation {
+    // Exclude SLF4J Android to avoid conflicts with the Android version in tests
+    exclude(group = "org.slf4j", module = "slf4j-android")
 }

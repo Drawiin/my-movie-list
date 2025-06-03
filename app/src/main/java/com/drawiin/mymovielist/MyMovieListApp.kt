@@ -14,6 +14,7 @@ import com.drawiin.mymovielist.core.navigation.AppRoutes
 import com.drawiin.mymovielist.core.uikit.foundation.MyMovieListTheme
 import com.drawiin.mymovielist.feature.list.presentation.MovieListScreen
 import com.drawiin.mymovielist.feature.moviedetails.presentation.MovieDetailScreen
+import com.drawiin.mymovielist.feature.watchlist.presentation.WatchListScreen
 
 @Composable
 fun MyMovieListApp() {
@@ -38,6 +39,9 @@ private fun MyMovieListAppNavGraph() {
                 viewModel = hiltViewModel(),
                 onGoToMovieDetails = {
                     navController.navigate(AppRoutes.MovieDetailsRoute(it))
+                },
+                onGoToWatchList = {
+                    navController.navigate(AppRoutes.WatchListRoute)
                 }
             )
         }
@@ -51,6 +55,18 @@ private fun MyMovieListAppNavGraph() {
                 }
             )
 
+        }
+
+        composable<AppRoutes.WatchListRoute> {
+            WatchListScreen(
+                viewModel = hiltViewModel(),
+                onGoBack = {
+                    navController.popBackStack()
+                },
+                onGoToDetails = { movieId ->
+                    navController.navigate(AppRoutes.MovieDetailsRoute(movieId))
+                }
+            )
         }
     }
 }

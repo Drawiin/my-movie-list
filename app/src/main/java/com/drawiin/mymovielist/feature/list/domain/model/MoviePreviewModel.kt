@@ -1,4 +1,10 @@
-package com.drawiin.mymovielist.common.movie.domain.model
+package com.drawiin.mymovielist.feature.list.domain.model
+
+data class MovieListPageModel(
+    val page: Int,
+    val totalPages: Int,
+    val movies: List<MoviePreviewModel>
+)
 
 data class MoviePreviewModel(
     val id: Int,
@@ -68,5 +74,4 @@ val mockMoviePreviewList = listOf(
         date = "2025-04-18",
         bannerUrl = "https://image.tmdb.org/t/p/w500/wVujUVvY4qvKARAslItQ4ARKqtz.jpg"
     )
-    // Add more items as needed...
 )

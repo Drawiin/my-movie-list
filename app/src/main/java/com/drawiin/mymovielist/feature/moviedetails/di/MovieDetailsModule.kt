@@ -1,7 +1,7 @@
 package com.drawiin.mymovielist.feature.moviedetails.di
 
-import com.drawiin.mymovielist.feature.moviedetails.data.datasource.MovieDetailsRemoteDataSource
-import com.drawiin.mymovielist.feature.moviedetails.data.datasource.MovieDetailsRemoteDataSourceImpl
+import com.drawiin.mymovielist.feature.moviedetails.data.datasource.remote.MovieDetailsRemoteDataSource
+import com.drawiin.mymovielist.feature.moviedetails.data.datasource.remote.MovieDetailsRemoteDataSourceImpl
 import com.drawiin.mymovielist.feature.moviedetails.data.repository.MovieDetailsRepository
 import com.drawiin.mymovielist.feature.moviedetails.data.repository.MovieDetailsRepositoryImpl
 import com.drawiin.mymovielist.feature.moviedetails.domain.usercase.GetMovieDetailsUseCase
