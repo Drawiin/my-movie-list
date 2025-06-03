@@ -132,4 +132,38 @@ class MovieListViewModelTest {
 
         sideEffects.last() assertIsEqualTo MyMoviesListSideEffect.GoToWatchList
     }
+
+    @Test
+    fun `should filter out duplicated movies when loading more pages`() = viewModelTest(movieListViewModel) {
+        val movieA = MoviePreviewModel(1, "A", "2024-01-01", "url")
+        val movieB = MoviePreviewModel(2, "B", "2024-01-02", "url")
+        val firstPage = MovieListPageModel(
+            page = 1,
+            totalPages = 2,
+            movies = listOf(movieA, movieB)
+        )
+        // Second page contains a duplicate of movieB and a new movieC
+        val movieC = MoviePreviewModel(3, "C", "2024-01-03", "url")
+        val secondPage = MovieListPageModel(
+            page = 2,
+            totalPages = 2,
+            movies = listOf(movieB, movieC)
+        )
+        coEvery { getMoviesUseCase.invoke(1) } returns Result.success(firstPage)
+        coEvery { getMoviesUseCase.invoke(2) } returns Result.success(secondPage)
+
+        viewModelUnderTest.fetchMovies()
+        advanceUntilIdle()
+        viewModelUnderTest.onLoadMore()
+        advanceUntilIdle()
+
+        // Only movieC should be appended, movieB is filtered out as duplicate
+        states.last() assertIsEqualTo MovieListState(
+            movies = listOf(movieA, movieB, movieC),
+            currentPage = 2,
+            totalPages = 2,
+            isLoading = false,
+            errorMessage = null
+        )
+    }
 }

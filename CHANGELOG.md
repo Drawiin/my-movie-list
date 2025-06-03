@@ -25,6 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing yet.
 
+## [1.0.0] - 2025-06-03
+
+### Added
+- #9 Wrap up for release
+    - Finish readme
+    - Fix TmDB related issues
+    - Adding project images
+
 ## [0.0.4] - 2025-06-02
 
 ### Added
