@@ -1,6 +1,8 @@
 package com.drawiin.mymovielist.feature.moviedetails.presentation
 
 import SubscribeToSideEffects
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,13 +25,16 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drawiin.mymovielist.R
+import com.drawiin.mymovielist.common.movie.domain.model.MovieModel
 import com.drawiin.mymovielist.core.arch.OnStartSideEffect
 import com.drawiin.mymovielist.core.uikit.components.BackDropImage
 import com.drawiin.mymovielist.core.uikit.components.BodyError
@@ -41,9 +48,13 @@ fun MovieDetailScreen(
     onGoBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val notifyAdd = rememberNotifyAdd()
+    val notifyRemove = rememberNotifyRemove()
     viewModel.sideEffects.SubscribeToSideEffects {
         when (it) {
             is MovieDetailsSideEffect.GoBack -> onGoBack()
+            is MovieDetailsSideEffect.NotifyWatchListAdd -> notifyAdd()
+            is MovieDetailsSideEffect.NotifyWatchListRemove -> notifyRemove()
         }
     }
 
@@ -51,16 +62,26 @@ fun MovieDetailScreen(
         viewModel.getMovieDetails(movieId)
     }
 
+    BackHandler {
+        viewModel.onBackPressed()
+    }
+
     MovieDetailContent(
         state,
-        onGoBack = onGoBack,
+        onGoBack = viewModel::onBackPressed,
+        onAddToWatchList = viewModel::onAddToWatchList,
         onRetry = { viewModel.getMovieDetails(movieId) }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieDetailContent(state: MovieDetailState, onGoBack: () -> Unit, onRetry: () -> Unit) {
+fun MovieDetailContent(
+    state: MovieDetailState,
+    onGoBack: () -> Unit,
+    onAddToWatchList: () -> Unit = {},
+    onRetry: () -> Unit
+) {
     val lazyListState = rememberLazyListState()
 
     Scaffold(
@@ -71,7 +92,27 @@ fun MovieDetailContent(state: MovieDetailState, onGoBack: () -> Unit, onRetry: (
                     IconButton(onClick = onGoBack) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, null)
                     }
-                })
+                },
+                actions = {
+                    when (val currentState = state) {
+                        is MovieDetailState.Success -> {
+                            IconButton(
+                                onClick = onAddToWatchList,
+                            ) {
+                                Icon(
+                                    if (currentState.movieDetails.isInWatchList) {
+                                        Icons.Default.Check
+                                    } else {
+                                        Icons.Default.Add
+                                    }, null
+                                )
+                            }
+                        }
+
+                        else -> Unit
+                    }
+                }
+            )
         }
     ) { padding ->
         when (state) {
@@ -157,6 +198,30 @@ private fun OverviewSection(state: MovieDetailState.Success) {
     }
 }
 
+@Composable
+fun rememberNotifyAdd(): () -> Unit {
+    val show = rememberToastMessage()
+    val message = stringResource(R.string.feature_details_added_to_watchlist)
+    return { show(message) }
+}
+
+@Composable
+fun rememberNotifyRemove(): () -> Unit {
+    val show = rememberToastMessage()
+    val message = stringResource(R.string.feature_details_removed_from_watchlist)
+    return { show(message) }
+}
+
+@Composable
+private fun rememberToastMessage(): (String) -> Unit {
+    val context = LocalContext.current
+    return remember(context) {
+        { message: String ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
 enum class MovieDetailsSection {
     Header,
     Overview,
@@ -168,7 +233,7 @@ enum class MovieDetailsSection {
 fun MovieDetailContentPreview() {
     MovieDetailContent(
         state = MovieDetailState.Success(
-            movieDetails = com.drawiin.mymovielist.feature.moviedetails.domain.model.MovieDetailsModel(
+            movieDetails = MovieModel(
                 id = 1,
                 title = "Lilo & Stitch",
                 overview = "A lonely Hawaiian girl and a fugitive alien mend a broken family.",
@@ -182,7 +247,8 @@ fun MovieDetailContentPreview() {
                 revenue = 610_800_000,
                 runtime = 108,
                 status = "Released",
-                tagline = "Hold on to your coconuts."
+                tagline = "Hold on to your coconuts.",
+                isInWatchList = false
             )
         ),
         onGoBack = {},

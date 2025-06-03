@@ -25,6 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Nothing yet.
 
+## [0.0.4] - 2025-06-02
+
+### Added
+- #7 Watchlist and Infinity Scroll.
+    - Save movie to watchlist
+    - Infinity scroll for movie list
+    - Create viewmodel test
+    - Add test for `viewmodels` and `usecases`
+
 ## [0.0.3] - 2025-06-01
 
 ### Added

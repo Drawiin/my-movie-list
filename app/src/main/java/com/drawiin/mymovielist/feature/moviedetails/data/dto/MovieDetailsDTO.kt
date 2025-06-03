@@ -1,7 +1,7 @@
 package com.drawiin.mymovielist.feature.moviedetails.data.dto
 
 import com.drawiin.mymovielist.core.localization.toLocalDate
-import com.drawiin.mymovielist.feature.moviedetails.domain.model.MovieDetailsModel
+import com.drawiin.mymovielist.common.movie.domain.model.MovieModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -53,8 +53,8 @@ data class ProductionCountryDTO(
     @SerialName("name") val nameDTO: String
 )
 
-fun MovieDetailsDTO.toDomainModel(): MovieDetailsModel {
-    return MovieDetailsModel(
+fun MovieDetailsDTO.toDomainModel(): MovieModel {
+    return MovieModel(
         id = idDTO,
         title = titleDTO,
         overview = overviewDTO ?: "",
@@ -68,6 +68,7 @@ fun MovieDetailsDTO.toDomainModel(): MovieDetailsModel {
         revenue = revenueDTO,
         runtime = runtimeDTO ?: 0,
         status = statusDTO,
-        tagline = taglineDTO ?: ""
+        tagline = taglineDTO ?: "",
+        isInWatchList = false
     )
 }

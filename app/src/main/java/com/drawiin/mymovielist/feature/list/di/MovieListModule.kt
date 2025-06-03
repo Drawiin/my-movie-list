@@ -1,7 +1,7 @@
 package com.drawiin.mymovielist.feature.list.di
 
-import com.drawiin.mymovielist.feature.list.data.datasource.MovieListRemoteDataSource
-import com.drawiin.mymovielist.feature.list.data.datasource.MovieListRemoteDataSourceImpl
+import com.drawiin.mymovielist.feature.list.data.datasource.remote.MovieListRemoteDataSource
+import com.drawiin.mymovielist.feature.list.data.datasource.remote.MovieListRemoteDataSourceImpl
 import com.drawiin.mymovielist.feature.list.data.repository.MovieListRepository
 import com.drawiin.mymovielist.feature.list.data.repository.MovieListRepositoryImpl
 import com.drawiin.mymovielist.feature.list.domain.usecase.GetMovieListUseCase
@@ -19,7 +19,7 @@ abstract class MovieListModule {
     companion object {
         @Provides
         fun providesInitialState(): MovieListState {
-            return MovieListState.Loading
+            return MovieListState()
         }
     }
 

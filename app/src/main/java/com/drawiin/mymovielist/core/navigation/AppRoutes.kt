@@ -14,5 +14,7 @@ sealed interface AppRoutes {
         val movieId: Int
     ) : AppRoutes
 
+    @Serializable
+    object WatchListRoute : AppRoutes
 }
 

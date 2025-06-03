@@ -1,12 +1,10 @@
 package com.drawiin.mymovielist.feature.list.data.dto
 
-import com.drawiin.mymovielist.common.movie.domain.model.MoviePreviewModel
+import com.drawiin.mymovielist.feature.list.domain.model.MoviePreviewModel
 import com.drawiin.mymovielist.core.localization.toLocalDate
+import com.drawiin.mymovielist.feature.list.domain.model.MovieListPageModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @Serializable
 data class MovieListResponseDTO(
@@ -34,6 +32,13 @@ data class MoviePreviewDTO(
     @SerialName("vote_count") val voteCount: Int
 )
 
+fun MovieListResponseDTO.toDomainModel(): MovieListPageModel {
+    return MovieListPageModel(
+        page = page,
+        totalPages = totalPages,
+        movies = results.map { it.toDomainModel() }
+    )
+}
 
 fun MoviePreviewDTO.toDomainModel(): MoviePreviewModel {
     return MoviePreviewModel(
