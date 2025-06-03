@@ -1,47 +1,109 @@
-# MyMovieList
+# MyMovieList [1.0.0] | [PT-BR](README.BR.md)
+**MyMovieList** is a Android for movie lovers to discover new movies to watch, based on watch is
+popular among users, the user can see more details about the movie, and add it to their personal watchlist.
+> The popular movies are fetched from [TMDb](https://www.themoviedb.org/) (The Movie Database) using their API.
 
-**MyMovieList** is a simple Android app that displays a list of movies fetched from [TMDb](https://www.themoviedb.org/).
-Users can view movie details and manage a personal watchlist by adding or removing movies.
-
-> _A minimal movie browsing experience, built with modern Android tools._
+## 📑 Table of Contents
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture Overview](#architecture-overview)
+- [Upcoming Features/Improvements](#upcoming-featuresimprovements)
+- [Planning & Roadmap](#-roadmap--planning)
+- [License](#-license)
+- [Changelog](#-changelog)
 
 ## 🎬 Features
-
-- 🔍 Fetch and display a list of movies from TMDb
+- 🔍 Infinity list of popular movies
 - 📄 View detailed information for each movie
 - ⭐ Add or remove movies from a personal watchlist
+
+<p align="center">
+  <img src=".github/assets/movie-home.png" width="200"/>
+  <img src=".github/assets/movie-detail.png" width="200"/>
+  <img src=".github/assets/movie-watchlist.png" width="200"/>
+</p>
 
 ## 🧰 Tech Stack
 
 This project is built using modern Android development tools and libraries:
-
 - **Language**: Kotlin
 - **UI**: Jetpack Compose + Material3
-- **Architecture**: MVVM
-- **Networking**: [Ktor Client](https://ktor.io/)
-- **Serialization**: Kotlinx Serialization
+- **Architecture**: MVVM + Clean Architecture + Modularization(In progress) + Version Catalogs
+- **Networking**: [Ktor Client](https://ktor.io/) + Kotlinx Serialization + SLF4J(Logging)
 - **State Management**: ViewModel + Kotlin Flow
 - **Navigation**: Jetpack Navigation for Compose
+- **Dependency Injection**: Hilt
+- **Local Storage**: Room
+- **Asynchronous Programming**: Coroutines + Flow
 
-## 🚀 Getting Started
+For testing, the project and guarantees a high level of quality with:
+- **Unit Testing**: JUnit4
+- **Mocking**: Mockk
+- **Assertion**: Truth + Custom infix functions idiomatic and meaningful assertions
+- **Tooling**: Custom test utilities to facilitate testing of ViewModels and UseCases
 
-### Prerequisites
-- Android Studio Hedgehog or newer
-- Android SDK 33+
-- TMDb API Key (you'll need to provide your own)
+## Architecture Overview
+**Overall Architecture**:
+Each of the apps modules are structured following the principles of Clean Architecture, which separates concerns into three main layers:
+- **Data Layer**: Responsible for data sources, including network and local storage. It uses repositories to abstract data access.
+- **Domain Layer**: Contains business logic and use cases. It defines the core functionality of the app, independent of any frameworks.
+- **Presentation Layer**: Implements the UI using Jetpack Compose. It uses ViewModels to manage UI-related data in a lifecycle-conscious way.
 
-### Run the App
+**Modularization Structure**:
+![Modularization Structure](.github/assets/modules.png)
+> \* Altough modularization is not fully implemented yet, the project package structure is structured to allow for easy separation of features into modules.
+- Module Types:
+  - `app`: The main application module that includes the entry point and overall app configuration and were all the navigation and DI wiring is done.
+  - `core`: Contains shared utilities, base classes, and common components used across the app like network client, base arch classes, test utilities etc.
+  - `common`: Contains common business logic and utilities that can be reused across different features. eg Interacting with the watchlist
+  - `features`: Contains feature-specific modules, each representing a distinct part of the app, such as movie listing, movie details, etc. Each feature module can be developed and tested independently.
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/Drawiin/my-movie-list.git
-    ```
+**MVVM implementation**:
+<br>
+![MVVM implementation](.github/assets/vm-overview.png)
+- The presentation layer uses a base `MyMoviesViewModel` class to facilitate building UIs using unidirectional
+data flow, where ui simply renders the `state`  adn reacts to  `side effects`.
+  - States are exposed as `StateFlow` for easy observation in the UI using a `collectAsStateWithLifecycle` extension function.
+  - Side effects are managed using a `SingleSharedFlow` to ensure they are emitted only once and not replayed on configuration changes.
+  - Startup actions can be performed using an `OnStartSideEffect` composable, which ensures actions are only called on the first composition.
+- `ViewModelTest` utilities are provided to facilitate testing of ViewModels, allowing for easy setup and assertions.
+```kotlin
+viewModelTest(watchListViewModel) {
+    coEvery { getWatchListUseCase.invoke() } returns Result.success(movies)
 
-2. Open the project in Android Studio.
+    viewModelUnderTest.getWatchList()
+    advanceUntilIdle()
 
-3. Add your TMDb API key to your `local.properties` or a configuration file, as instructed in the project’s `README` or `build.gradle`.
+    states.first() assertIsEqualTo WatchListState.Loading
+    states.last() assertIsEqualTo WatchListState.Success(movies)
+}
+```
 
-4. Build and run the app on an emulator or physical device.
+## Upcoming Features/Improvements
+**Features**
+The following features are planned for future releases:
+- Movie search functionality
+- Different kinds of movie lists (e.g., top-rated, upcoming)
+- Sharing movie details with friends
+- Discovering where to watch movies (streaming platforms)
+- Sharing watchlist with friends
+- Add support for other languages and regions
+
+**Improvements**
+- Adding a limit of movies on the infinity scroll list so whe limit the amount of data in memory
+- Add a caching layer to reduce network calls and improve performance
+- Implementing the modularization of the project
+- Implement tests on the data layer and ui tests for the features(snapshots and end-to-end tests for core flows)
+- Implementing a CI/CD pipeline for automated testing and deployment
+- Implementing a more robust error handling mechanism
+- Improving the UI/UX with animations and transitions
+
+## 🗺️ Roadmap & Planning
+
+The project's planned features and how progress is tracked using GitHub Issues and milestones, the project
+follows a trunk-based development model(although gitflow is also an option), where features are developed
+in branches and merged into the main branch when complete.
+And version are controlled using [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and tags
 
 ## 📄 License
 
@@ -51,47 +113,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 All notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
 
-## Tech Notes
-Deep dive on some of the tech choices and patterns used in this project
-
-### Architecture
-The app uses overall clean architecture with three layers data, domain and presentation, the presentation uses
-MVVM architecture implemented using a base class `MyMoviesViewModel` with some particularities:
-- `State`: The single soruce of truth estate is exposed as a `StateFlow` to allow for easy observation in the UI, the state is always updated and start at a initial state for easier testing.
-- `SideEffects`: The view model exposes a `SingleSharedFlow` for side effects, this allows the view model to emit events that should be handled by the UI, such as navigation or showing a snackbar.
-    > Note: The `SingleSharedFlow` is used to ensure that the side effects are only emitted once and are not replayed on configuration changes and/or on resume events.
-- `Actions`: The actions for simplicity are handled as simple callback functions on the viewmodel.
--
-#### Interaction with the ViewModel on the UI
-**Observing The State**
-This is done using the `collectAsStateWithLifecycle` extension function, which allows the UI to observe the state and automatically handle lifecycle events.
-```kotlin
-val state by viewModel.state.collectAsStateWithLifecycle()
-```
-
-**Listening to Side Effects**
-This is done using a especial composable function `CollectSideEffects` that allows the UI to listen to side effects and handle them accordingly.
-```kotlin
- viewModel.sideEffects.SubscribeToSideEffects {
-    when (it) {
-        // Handle side effects here
-    }
-}
-```
-
-**Startup Actions**
-Its common in apps to have some actions that need to be performed on startup, such as fetching data or checking permissions.
-To offer more control over when these actions are performed, and facilitate testing, we have a special `OnStartSideEffect`
-composable that allows the view model to perform actions on startup, it also ensures that the action is called only on the first composition
-avoiding calling this function on configuration changes.
-
-```kotlin
-OnStartSideEffect {
-    viewModel.loadInitalData()
-}
-```
-
-#### Testing ViewModels
-To facilitate testing of the ViewModels, a series of utility functions are provided to help with the setup of the tests.
-
-## Project On Github

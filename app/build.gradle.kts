@@ -9,9 +9,9 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
-val major = 0
+val major = 1
 val minor = 0
-val patch = 3
+val patch = 0
 
 android {
     namespace = "com.drawiin.mymovielist"
